@@ -1,0 +1,434 @@
+@import "tailwindcss";
+
+/**
+ * Two roles, two palettes — deliberately not one "brand" colour doing
+ * everything:
+ *
+ * `charcoal` is the neutral: body text, headings, borders' darker end, the
+ * header, and any button that is not itself the thing the marketplace wants
+ * you to press. `cyan` and `mint` are the accent pair — the site's identity
+ * gradient (`linear-gradient(90deg, #00c9ff 0%, #92fe9d 100%)`) split into two
+ * named scales rather than one, so a plain button can be solid cyan, a
+ * secondary or active/selected one solid mint, and the literal two-stop
+ * gradient stays reserved for the handful of buttons meant to carry it. Both
+ * are bright enough that every button built from them sets dark text
+ * (`charcoal-900`) rather than white — white on either fails contrast.
+ *
+ * `sand`, `cream` and `taupe` are the warm neutrals behind and around all of
+ * it: sand for the page itself, cream for cards and panels one step lighter
+ * than the page, taupe for every border and divider — kept as-is, since the
+ * brief asks for content areas to stay clean and light, not to match the
+ * accent's hue.
+ */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --color-charcoal-50: #f7f6f5;
+  --color-charcoal-100: #ece9e7;
+  --color-charcoal-200: #d6d2ce;
+  --color-charcoal-300: #b8b2ac;
+  --color-charcoal-400: #948d86;
+  --color-charcoal-500: #746c65;
+  --color-charcoal-600: #574f49;
+  --color-charcoal-700: #423a35;
+  --color-charcoal-800: #322b27;
+  --color-charcoal-900: #252525;
+
+  --color-cyan-50: #eafcff;
+  --color-cyan-100: #d5f9ff;
+  --color-cyan-200: #abf2ff;
+  --color-cyan-300: #7cebff;
+  --color-cyan-400: #3fdaff;
+  --color-cyan-500: #00c9ff;
+  --color-cyan-600: #00a8d6;
+  --color-cyan-700: #0087ad;
+  --color-cyan-800: #006685;
+  --color-cyan-900: #00455c;
+
+  --color-mint-50: #f2fff4;
+  --color-mint-100: #e0ffe6;
+  --color-mint-200: #c2ffcc;
+  --color-mint-300: #a8ffb4;
+  --color-mint-400: #9dfea8;
+  --color-mint-500: #92fe9d;
+  --color-mint-600: #5fe873;
+  --color-mint-700: #3fc754;
+  --color-mint-800: #2e9940;
+  --color-mint-900: #1f6b2c;
+
+  --color-sand: #f5f1e8;
+  --color-cream: #fbf9f4;
+  --color-taupe: #d8cfc3;
+  --color-taupe-dark: #c3b6a5;
+
+  /* The fill every button and dropdown panel carries — a near-white cyan,
+     deliberately paler than the `cyan` scale itself. Borders, shadows and
+     icons stay on `cyan`/`mint` for definition; only the fill moved here. */
+  --color-mist: #d9fffd;
+  --color-mist-dark: #a8ece3;
+}
+
+html {
+  font-size: 17.5px;
+}
+
+/* The identity gradient itself, behind every page rather than only the hero —
+   fixed to the viewport so the same wash is present at any scroll depth on any
+   route, not just the first screenful. Cards and panels sitting on top of it
+   carry their own much lighter tint of the same two colours (see each
+   component), so text stays legible while nothing reads as a plain white or
+   cream block anymore. */
+body {
+  font-family: var(--font-sans);
+  background-color: #fbf9f4;
+  background-image: linear-gradient(135deg, #abf2ff 0%, #fbf9f4 50%, #c2ffcc 100%);
+  background-attachment: fixed;
+}
+
+/* --- Cursor: pointer on everything actually clickable --------------------
+   Browsers are inconsistent about this out of the box: `<a href>` gets
+   `cursor: pointer` for free, but `<button>`, `<select>` and a checkbox/radio
+   (or its label, which toggles it too) all default to `cursor: default` —
+   the plain arrow, as if they were inert text. That reads as "is this
+   clickable?" doubt on exactly the controls that most need to look pressable.
+
+   Covers every semantic/native interactive element site-wide in one place,
+   rather than adding `cursor-pointer` by hand to every button this app
+   already has. A non-semantic stand-in for a button (a `<div>`/`<span>` with
+   its own `onClick`) isn't matched by any of this — the browser has no way
+   to know it's interactive either, so those still need `cursor-pointer`
+   added explicitly at the call site, same as before.
+
+   The `:disabled`/`aria-disabled` rule after it exists so a control that
+   cannot be used right now never *looks* like one that can — an explicit
+   `disabled:cursor-not-allowed` utility at a call site still wins (it's more
+   specific), this only sets the sane default where nobody bothered to. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+a[href],
+select:not(:disabled),
+summary,
+input[type="checkbox"]:not(:disabled),
+input[type="radio"]:not(:disabled),
+label:has(input[type="checkbox"]:not(:disabled)),
+label:has(input[type="radio"]:not(:disabled)) {
+  cursor: pointer;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"],
+select:disabled,
+input[type="checkbox"]:disabled,
+input[type="radio"]:disabled {
+  cursor: not-allowed;
+}
+
+/* Promo banner eases in, then breathes very slightly. */
+@keyframes banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes banner-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Logo badge rocks gently, forever. */
+@keyframes logo-sway {
+  0%,
+  100% {
+    rotate: -7deg;
+  }
+  50% {
+    rotate: 7deg;
+  }
+}
+
+/* The brand mark breathing on the full-screen route loader.
+
+   Deliberately small — 1.06 at the top of the swing, not a bounce. A splash
+   screen is a held moment, so the motion has to survive being looked at for a
+   second or two without becoming the thing you notice. Paired with a faint
+   halo (below) that breathes in the opposite phase, so the mark reads as lit
+   rather than as moving. */
+@keyframes brand-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+/* The halo behind the badge, expanding as the mark settles back. */
+@keyframes brand-halo {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.1;
+    transform: scale(1.5);
+  }
+}
+
+/* Light sweeps across the logo badge, pausing between passes. */
+@keyframes logo-shine {
+  0% {
+    translate: -150% 0;
+  }
+  45%,
+  100% {
+    translate: 150% 0;
+  }
+}
+
+/* Hero content rises into place once on load, staggered by an inline delay.
+   Fill mode `both` matters: it holds the end state, so the text cannot be left
+   invisible if the animation is interrupted. Elements carry no base opacity-0
+   class either, which is what makes motion-reduce:animate-none safe. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* The glow behind the hero drifts slowly, so the panel is never quite static. */
+@keyframes glow-drift {
+  0%,
+  100% {
+    transform: translate3d(-6%, -4%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6%, 4%, 0) scale(1.15);
+  }
+}
+
+/* Onboarding: a plain fade for whole screens, and a scale-up for the cards.
+   Both use fill-mode `both` at the call site so the end state is held. */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The header settling in on load: a short fade with a small drop from above.
+   Held with fill-mode `both` at the call site so it cannot be left mid-fade. */
+@keyframes header-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* A menu/dropdown arriving: a quick fade with a small downward settle. Short and
+   subtle — feedback that it opened, not a performance. */
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* A gentle blink for a line worth drawing the eye to — fades rather than hard
+   on/off, so it reads as a soft pulse instead of a flickering sign. */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* The one screen that leaves: fades and lifts slightly as the next arrives. */
+@keyframes fade-out-up {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+/* Category names drifting across the welcome screen. The list is rendered twice
+   and shifted by exactly half, so the loop has no visible seam. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* The swapping word in the welcome subheading. */
+@keyframes word-swap {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* The floating listing cards on the welcome screen: a slow bob with a touch of
+   rotation, so no two cards ever look locked together. */
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--tilt, 0deg));
+  }
+  50% {
+    transform: translateY(-16px) rotate(calc(var(--tilt, 0deg) * 0.4));
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Leaving is quicker than arriving and does not travel: a dialog that drifts
+   back down on the way out delays the answer the person just gave. It shrinks
+   very slightly so the dismissal still registers as deliberate. */
+@keyframes modal-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+/* The dim behind a dialog, faded rather than snapped on so the page recedes
+   instead of being covered. Paired with a backdrop blur at the call site. */
+@keyframes scrim-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scrim-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* --- Loading / skeleton system -------------------------------------------
+   One idiom for every placeholder on the site, so skeletons read as the same
+   surface the real content will occupy rather than as a different component.
+
+   The block breathes between a warm taupe and a near-white instead of sweeping
+   a highlight across. `alternate` is what makes it read as breathing: the
+   colour walks to the light end and back rather than snapping to the start on
+   each cycle, so there is no visible seam. One second linear is slow enough
+   not to nag and quick enough to look alive.
+
+   Colour is carried by an animated `background-color`, so the markup stays a
+   plain box that degrades to a flat taupe under reduced motion. */
+@keyframes skeleton-pulse {
+  0% {
+    background-color: rgb(214, 204, 190);
+  }
+  100% {
+    background-color: rgb(245, 242, 236);
+  }
+}
+
+.skeleton-block {
+  background-color: rgb(226, 218, 207);
+  animation: skeleton-pulse 1s linear infinite alternate;
+}
+
+/* Real content replacing its skeleton: a plain fade so data arrives rather
+   than snapping in. Held at the end with fill-mode `both` at the call site. */
+@keyframes content-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The indeterminate bar under the page loader, sweeping while a route chunk
+   or its first data are still in flight. */
+@keyframes route-progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+/* Motion is decoration here: a static taupe block still says "loading" to
+   anyone who has asked the system to calm down. The mid-tone is held so the
+   placeholder stays visible rather than resting on either extreme. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block {
+    animation: none;
+    background-color: rgb(226, 218, 207);
+  }
+}

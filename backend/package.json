@@ -1,0 +1,49 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Bazaar Marketplace API (Express + PostgreSQL)",
+  "type": "module",
+  "main": "src/server.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "migrate": "tsx src/db/migrate.ts",
+    "images:fetch": "tsx src/scripts/fetchListingImages.ts",
+    "explain:facets": "tsx src/scripts/explainFacets.ts",
+    "typecheck": "tsc --noEmit",
+    "seed:marketplace": "tsx src/db/seeds/seedMarketplace.ts",
+    "seed:marketplace100k": "tsx src/db/seeds/seedMarketplace100k.ts",
+    "images:pexels": "tsx src/scripts/fetchPexelsImages.ts",
+    "images:upload": "tsx src/scripts/uploadImagesToStorage.ts",
+    "images:repoint": "tsx src/scripts/rewritePhotoPaths.ts",
+    "backfill:seller-contact": "tsx src/scripts/backfillSellerContact.ts",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/multer": "^2.2.0",
+    "bcryptjs": "^3.0.3",
+    "connect-pg-simple": "^10.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "multer": "^2.2.0",
+    "pg": "^8.13.1",
+    "sharp": "^0.35.3",
+    "tsx": "^4.19.2",
+    "typescript": "~6.0.2"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/connect-pg-simple": "^7.0.3",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.19.0",
+    "@types/node": "^24.13.3",
+    "@types/pg": "^8.11.10",
+    "vitest": "^4.1.11"
+  }
+}

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" role="img" aria-label="Cameras & Photography">
+  <rect width="800" height="600" fill="#f4f4f5"/>
+  <rect x="0" y="0" width="800" height="8" fill="#ec4899"/>
+  <circle cx="400" cy="250" r="70" fill="#ec4899" opacity="0.15"/>
+  <text x="400" y="268" text-anchor="middle" font-family="system-ui,sans-serif" font-size="56" font-weight="700" fill="#ec4899">C</text>
+  <text x="400" y="382" text-anchor="middle" font-family="system-ui,sans-serif" font-size="34" font-weight="700" fill="#18181b">Cameras & Photography</text>
+  <text x="400" y="422" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" fill="#71717a">No photo supplied</text>
+</svg>

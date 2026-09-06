@@ -1,0 +1,9 @@
+node_modules
+dist
+
+# Every local env file, including the .env.bak.* copies taken before the
+# Supabase migration. `.env` alone would not match those, and they hold the
+# database password. `.env.example` is the one deliberate exception.
+.env
+.env.*
+!.env.example

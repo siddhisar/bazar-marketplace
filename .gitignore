@@ -1,0 +1,58 @@
+# ---------------------------------------------------------------------------
+# Dependencies
+# ---------------------------------------------------------------------------
+node_modules/
+
+# ---------------------------------------------------------------------------
+# Build / generated output
+# ---------------------------------------------------------------------------
+dist/
+dist-ssr/
+build/
+.next/
+out/
+*.local
+
+# ---------------------------------------------------------------------------
+# Environment files & secrets — never commit real values.
+# The committed *.example files document every variable with placeholders.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# ---------------------------------------------------------------------------
+# Database dumps and image archives created during the Supabase migration.
+# These contain real user data (users, sellers, sessions) and must never be
+# committed. Keep them on disk as local backups only.
+# ---------------------------------------------------------------------------
+backups/
+*.dump
+*.sql.gz
+
+# ---------------------------------------------------------------------------
+# Internal report / brief documents — kept local, not part of the public repo.
+# ---------------------------------------------------------------------------
+Bazaar_Project_Report.docx
+BRIEF.md
+
+# ---------------------------------------------------------------------------
+# Logs
+# ---------------------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------------------------------------------------------------------------
+# OS / editor cruft
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
